@@ -1,0 +1,54 @@
+---
+- hosts: all
+  become: true
+
+  tasks:
+    - name: Installation pre-requis
+      apt:
+        pkg:
+          - python3-pip
+          - python3-venv
+          - virtualenv
+          - python3-setuptools
+        state: latest
+        update_cache: true
+
+    - name: On crée l'utilisateur fastjo pour lancer l'API
+      ansible.builtin.user:
+        name: fastjo
+        password: "{{ 'superuser' | password_hash('sha512') }}"
+        create_home: yes
+        state: present
+
+    - name: On crée le répertoire de l'application
+      file:
+        path: /home/fastjo/fastapi
+        state: directory
+        owner: fastjo
+        group: fastjo
+
+    - name: Création de l'environnement virtuel
+      become_user: fastjo
+      ansible.builtin.shell: python3 -m venv /home/fastjo/fastapi/venv
+
+    - name: Activation de l'environnement
+      become_user: fastjo
+      ansible.builtin.shell: source /home/fastjo/fastapi/venv/bin/activate
+
+    - name: Installation pre-requis python
+      pip:
+        requirements: files/requirements.txt
+        virtualenv: /home/fastjo/fastapi/venv
+        virtualenv_command: /home/fastjo/fastapi/venv/bin/python
+      become_user: fastjo
+
+    - name: Envoie code python vers la vm
+      copy:
+        src: files/main.py
+        dst: /home/fastjo/fastapi/
+      owner: fastjo
+      group: fastjo
+
+    - name: Activation de l'environnement
+      become_user: fastjo
+      ansible.builtin.shell: uvicorn main:app --reload

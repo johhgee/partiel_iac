@@ -1,6 +1,0 @@
----
-- name: Installation semaphore
-  become: true
-  hosts: vm1
-  roles:
-    - role: "semaphore"
