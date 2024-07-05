@@ -1,9 +1,14 @@
-# tp_efficom_iac
+#Partiel IAC 05/07
 
 ## Ansible
-Il est composé d'un playbook pour installer docker et d'un role pour installer semaphore à l'aide d'un docker-compose.yml
+Déploiement de FastAPI dans un environnement virtuel Python avec Ansible.
+Le playbook : 
+- crée un utilisateur fastjo
+- crée un environnement virtuel
+- copie le fichier python
+- Install les dépendances nécessaires
+- lance le serveur FastAPI avec Uvicorn
 
 ## Terraform
 
-Utilisation (en petite partie) du code de Hugo
-- Rajout de la règle pour exposer le port 3000 pour Semaphore
+Utilisation du code terraform du TP
